@@ -29,6 +29,7 @@ public class Trainee {
     private User user;
 
 
+
     @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL)
     private List<Training> trainings;
 

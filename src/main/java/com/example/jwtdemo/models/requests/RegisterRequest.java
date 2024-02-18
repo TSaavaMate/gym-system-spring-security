@@ -18,4 +18,6 @@ public class RegisterRequest {
     private String username;
 
     private int IsActive;
+
+    private String role;
 }

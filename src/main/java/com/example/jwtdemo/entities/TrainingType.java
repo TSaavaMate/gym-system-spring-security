@@ -11,13 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "TrainingType")
+@Table(name = "Training_Type")
 public class TrainingType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id") // Specify the name of the primary key column
+    private Long trainingType_id;
 
-    @Column(unique = true, nullable = false,name = "trainingType_name")
+    @Column(unique = true, nullable = false,name = "training_type_name")
     private String trainingTypeName;
 
 

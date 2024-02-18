@@ -1,12 +1,12 @@
 package com.example.jwtdemo.auth;
 
 import com.example.jwtdemo.config.JwtTokenService;
-import com.example.jwtdemo.entities.Role;
 import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.models.requests.AuthenticationRequest;
 import com.example.jwtdemo.models.requests.RegisterRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import com.example.jwtdemo.repositories.UserRepository;
+import com.example.jwtdemo.utils.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +31,7 @@ public class AuthenticateService {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(request.getRole())
                 .build();
         userRepository.save(user);
 

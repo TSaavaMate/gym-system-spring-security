@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Table(name = "Training")
 public class Training {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +38,7 @@ public class Training {
 
 
     @ManyToOne
-    @JoinColumn(name = "trainingType_id")
+    @JoinColumn(name = "training_Type")
     private TrainingType trainingType;
 
 }
