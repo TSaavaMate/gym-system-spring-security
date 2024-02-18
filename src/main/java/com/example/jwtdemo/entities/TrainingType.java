@@ -1,5 +1,6 @@
 package com.example.jwtdemo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class TrainingType {
 
 
     @OneToMany(mappedBy = "trainingType", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Training> trainings;
 
 }

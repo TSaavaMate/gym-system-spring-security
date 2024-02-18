@@ -1,6 +1,7 @@
 package com.example.jwtdemo.auth;
 
 import com.example.jwtdemo.models.requests.AuthenticationRequest;
+import com.example.jwtdemo.models.requests.ChangePasswordRequest;
 import com.example.jwtdemo.models.requests.RegisterRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,12 @@ public class AuthController {
             @RequestBody AuthenticationRequest request
     ){
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<AuthenticationResponse> changePassword(
+            @RequestBody ChangePasswordRequest request
+    ){
+        return ResponseEntity.ok(service.changePasswordAndAuthenticate(request));
     }
 }

@@ -1,14 +1,18 @@
 package com.example.jwtdemo.services.trainee;
 
 import com.example.jwtdemo.entities.Trainee;
+import com.example.jwtdemo.entities.Training;
+import com.example.jwtdemo.models.requests.TrainingCriteriaRequest;
 import com.example.jwtdemo.models.requests.UpdateTraineeRequest;
 import com.example.jwtdemo.repositories.TraineeRepository;
+import com.example.jwtdemo.repositories.TrainingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +20,8 @@ import java.util.Optional;
 public class ConcreteTraineeService implements TraineeService{
 
     private final TraineeRepository traineeRepository;
+
+    private final TrainingRepository trainingRepository;
 
     @Override
     public Optional<Trainee> findByUsername(String username) {
@@ -70,6 +76,21 @@ public class ConcreteTraineeService implements TraineeService{
 
         return traineeRepository.findById(request.getId()).orElseThrow();
 
+
+    }
+
+    @Override
+    public List<Training> getTraineeTrainings(TrainingCriteriaRequest request) {
+
+
+        var byTraineeAndCriteria = trainingRepository.findByTraineeAndCriteria(
+                traineeRepository.findTraineeByUserUsername(request.getUsername()).orElseThrow(),
+                request.getPeriodFrom(),
+                request.getPeriodTo(),
+                request.getTrainerFirstName(),
+                request.getTrainingType().getTrainingTypeName()
+        );
+        return byTraineeAndCriteria;
 
     }
 

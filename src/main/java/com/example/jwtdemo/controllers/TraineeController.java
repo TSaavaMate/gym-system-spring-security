@@ -1,6 +1,8 @@
 package com.example.jwtdemo.controllers;
 
 import com.example.jwtdemo.entities.Trainee;
+import com.example.jwtdemo.entities.Training;
+import com.example.jwtdemo.models.requests.TrainingCriteriaRequest;
 import com.example.jwtdemo.models.requests.UpdateTraineeRequest;
 import com.example.jwtdemo.services.trainee.TraineeService;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("api/v1/trainee")
 @RequiredArgsConstructor
 public class TraineeController {
@@ -40,6 +43,14 @@ public class TraineeController {
     @GetMapping("/deactivate/{id}")
     public ResponseEntity<Trainee> deActivate(@PathVariable Long id) {
         return ResponseEntity.ok(traineeService.SetNotActive(id));
+    }
+
+    @PostMapping("/user/trainings")
+    public ResponseEntity<List<Training>> getTraineeTrainingsList(@RequestBody TrainingCriteriaRequest request){
+
+        var trainings = traineeService.getTraineeTrainings(request);
+
+        return ResponseEntity.ok(trainings);
     }
 
     @DeleteMapping("/{id}")

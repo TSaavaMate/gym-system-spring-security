@@ -1,5 +1,8 @@
 package com.example.jwtdemo.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -25,15 +28,31 @@ public class Training {
     @NonNull
     private Date date;
 
-    @NonNull
-    private Number duration;
 
-    @ManyToOne
+    @NonNull
+    private Integer duration;
+
+    @Override
+    public String toString() {
+        return "Training{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", duration=" + duration +
+                ", trainee=" + trainee.getUser().getFirstName() +
+                ", trainer=" + trainer +
+                ", trainingType=" + trainingType.getTrainingTypeName() +
+                '}';
+    }
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "trainee_id")
+    @JsonIgnore
     private Trainee trainee;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "trainer_id")
+    @JsonManagedReference
     private Trainer trainer;
 
 

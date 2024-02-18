@@ -1,5 +1,6 @@
 package com.example.jwtdemo.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,7 +32,17 @@ public class Trainee {
 
 
     @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Training> trainings;
 
-
+    @Override
+    public String toString() {
+        return "Trainee{" +
+                "id=" + id +
+                ", dateOfBirth=" + dateOfBirth +
+                ", address='" + address + '\'' +
+                ", user=" + user +
+                ", trainings=" + trainings +
+                '}';
+    }
 }
