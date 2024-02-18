@@ -1,5 +1,8 @@
 package com.example.jwtdemo.auth;
 
+import com.example.jwtdemo.models.requests.AuthenticationRequest;
+import com.example.jwtdemo.models.requests.RegisterRequest;
+import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
