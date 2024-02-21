@@ -37,6 +37,7 @@ public class AuthenticateService {
                 .username(credentialConfigurer.generateUniqueUsername(request.getFirstName(), request.getLastName()))
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .isActive(request.getIsActive())
                 .build();
         userRepository.save(user);
 

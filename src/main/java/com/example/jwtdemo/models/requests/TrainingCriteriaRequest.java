@@ -17,6 +17,5 @@ public class TrainingCriteriaRequest {
     private Date periodFrom;
     private Date periodTo;
     private String trainerFirstName;
-
     private TrainingType trainingType;
 }

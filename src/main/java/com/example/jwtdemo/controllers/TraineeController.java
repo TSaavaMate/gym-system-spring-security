@@ -7,7 +7,6 @@ import com.example.jwtdemo.models.requests.UpdateTraineeRequest;
 import com.example.jwtdemo.services.trainee.TraineeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;

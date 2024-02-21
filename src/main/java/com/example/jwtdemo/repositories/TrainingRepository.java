@@ -1,6 +1,7 @@
 package com.example.jwtdemo.repositories;
 
 import com.example.jwtdemo.entities.Trainee;
+import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.entities.Training;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +25,20 @@ public interface TrainingRepository extends JpaRepository<Training,Long> {
             @Param("periodFrom") Date periodFrom,
             @Param("periodTo") Date periodTo,
             @Param("trainerName") String trainerName,
+            @Param("trainingType") String trainingType
+    );
+    @Query("SELECT t FROM Training t " +
+            "WHERE t.trainer = :trainer " +
+            "AND (:periodFrom IS NULL OR t.date >= :periodFrom) " +
+            "AND (:periodTo IS NULL OR t.date <= :periodTo) " +
+            "AND (:traineeName IS NULL OR t.trainee.user.firstName = :traineeName) " +
+            "AND (:trainingType IS NULL OR t.trainingType.trainingTypeName = :trainingType)")
+
+    List<Training> findByTrainerAndCriteria(
+            @Param("trainer") Trainer trainer,
+            @Param("periodFrom") Date periodFrom,
+            @Param("periodTo") Date periodTo,
+            @Param("traineeName") String traineeName,
             @Param("trainingType") String trainingType
     );
 }
