@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticateService {
+    private final CredentialConfigurer credentialConfigurer;
 
     private final UserRepository userRepository;
 
@@ -26,10 +27,14 @@ public class AuthenticateService {
     private final AuthenticationManager authManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+
+
+
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
+                .username(credentialConfigurer.generateUniqueUsername(request.getFirstName(), request.getLastName()))
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
@@ -71,4 +76,5 @@ public class AuthenticateService {
                 .build();
 
     }
+
 }
