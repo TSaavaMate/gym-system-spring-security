@@ -12,10 +12,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TrainingCriteriaRequest {
+public class TrainerTrainingRequest {
     private String username;
     private Date periodFrom;
     private Date periodTo;
-    private String trainerFirstName;
+    private String traineeFirstName;
     private TrainingType trainingType;
 }

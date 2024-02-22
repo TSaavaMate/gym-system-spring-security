@@ -1,7 +1,12 @@
 package com.example.jwtdemo.services.training;
 
 import com.example.jwtdemo.entities.Training;
-import com.example.jwtdemo.services.DaoService;
+import com.example.jwtdemo.models.requests.TraineeTrainingRequest;
+import com.example.jwtdemo.models.requests.TrainerTrainingRequest;
 
-public interface TrainingService  extends DaoService<Training,Integer> {
+import java.util.List;
+
+public interface TrainingService{
+    List<Training> getTraineeTrainings(TraineeTrainingRequest request);
+    List<Training>  getTrainerTrainings(TrainerTrainingRequest request);
 }

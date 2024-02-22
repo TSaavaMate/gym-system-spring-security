@@ -1,8 +1,6 @@
 package com.example.jwtdemo.controllers;
 
 import com.example.jwtdemo.entities.Trainee;
-import com.example.jwtdemo.entities.Training;
-import com.example.jwtdemo.models.requests.TrainingCriteriaRequest;
 import com.example.jwtdemo.models.requests.UpdateTraineeRequest;
 import com.example.jwtdemo.services.trainee.TraineeService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,28 +34,19 @@ public class TraineeController {
 
     @GetMapping("/activate/{id}")
     public ResponseEntity<Trainee> activate(@PathVariable Long id) {
-        return ResponseEntity.ok(traineeService.SetActive(id));
+        return ResponseEntity.ok(traineeService.setActiveState(id,true));
     }
     @GetMapping("/deactivate/{id}")
     public ResponseEntity<Trainee> deActivate(@PathVariable Long id) {
-        return ResponseEntity.ok(traineeService.SetNotActive(id));
+        return ResponseEntity.ok(traineeService.setActiveState(id,false));
     }
 
-    @PostMapping("/user/trainings")
-    public ResponseEntity<List<Training>> getTraineeTrainingsList(@RequestBody TrainingCriteriaRequest request){
-
-        var trainings = traineeService.getTraineeTrainings(request);
-
-        return ResponseEntity.ok(trainings);
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
         traineeService.delete(id);
         return ResponseEntity.ok("deleted");
     }
-
-
 
 
 
