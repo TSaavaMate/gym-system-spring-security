@@ -28,17 +28,19 @@ public class AuthenticateService {
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-
+        String username = credentialConfigurer.generateUniqueUsername(request.getFirstName(), request.getLastName());
+        String encoded = passwordEncoder.encode(request.getPassword());
 
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
-                .username(credentialConfigurer.generateUniqueUsername(request.getFirstName(), request.getLastName()))
-                .password(passwordEncoder.encode(request.getPassword()))
+                .username(username)
+                .password(encoded)
                 .role(request.getRole())
                 .isActive(request.getIsActive())
                 .build();
+
         userRepository.save(user);
 
         var jwt = jwtTokenService.generateToken(user);
@@ -49,6 +51,7 @@ public class AuthenticateService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
         authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),

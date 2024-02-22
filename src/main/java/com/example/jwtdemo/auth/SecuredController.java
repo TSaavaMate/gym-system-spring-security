@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/v1/demo-controller")
 public class SecuredController {
-
     @GetMapping
     public ResponseEntity<String> hello(){
-        return ResponseEntity.ok("hi,from authed");
+        return ResponseEntity.ok("hi,from authenticated");
     }
 }

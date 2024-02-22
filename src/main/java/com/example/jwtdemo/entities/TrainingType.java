@@ -16,7 +16,7 @@ import java.util.List;
 public class TrainingType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // Specify the name of the primary key column
+    @Column(name = "id")
     private Long trainingType_id;
 
     @Column(unique = true, nullable = false,name = "training_type_name")

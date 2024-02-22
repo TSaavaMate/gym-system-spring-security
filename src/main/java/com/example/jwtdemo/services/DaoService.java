@@ -1,8 +1,5 @@
 package com.example.jwtdemo.services;
 
-import com.example.jwtdemo.entities.Trainer;
-import com.example.jwtdemo.models.requests.UpdateTrainerRequest;
-
 import java.util.Collection;
 import java.util.Optional;
 
