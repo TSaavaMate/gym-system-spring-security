@@ -25,16 +25,18 @@ public class AuthController {
         return ResponseEntity.ok(service.register(request));
     }
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
+    public ResponseEntity<?> authenticate(
             @RequestBody AuthenticationRequest request
     ){
-        return ResponseEntity.ok(service.authenticate(request));
+        service.authenticate(request);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<AuthenticationResponse> changePassword(
+    public ResponseEntity<?> changePassword(
             @RequestBody ChangePasswordRequest request
     ){
-        return ResponseEntity.ok(service.changePasswordAndAuthenticate(request));
+        service.changePasswordAndAuthenticate(request);
+        return ResponseEntity.ok().build();
     }
 }

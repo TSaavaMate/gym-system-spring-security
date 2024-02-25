@@ -2,6 +2,7 @@ package com.example.jwtdemo.auth;
 
 import com.example.jwtdemo.config.JwtTokenService;
 import com.example.jwtdemo.entities.User;
+import com.example.jwtdemo.exceptions.InvalidCredentialException;
 import com.example.jwtdemo.models.requests.authRequest.AuthenticationRequest;
 import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
@@ -69,6 +70,11 @@ public class AuthenticateService {
 
     public AuthenticationResponse changePasswordAndAuthenticate(ChangePasswordRequest request) {
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        String oldPassword = request.getOldPassword();
+
+        if (!passwordEncoder.matches(oldPassword,user.getPassword())){
+            throw new InvalidCredentialException("Wrong email or password provided");
+        }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 

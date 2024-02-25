@@ -21,4 +21,15 @@ public class DefaultExceptionHandler {
                 );
         return new ResponseEntity<>(apiError,HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(InvalidCredentialException.class)
+    public ResponseEntity<ApiError> handleWrongCredentials(InvalidCredentialException ex,
+                                                           HttpServletRequest request){
+        var apiError = new ApiError(
+                request.getRequestURI(),
+                ex.getMessage(),
+                HttpStatus.UNAUTHORIZED.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError,HttpStatus.UNAUTHORIZED);
+    }
 }
