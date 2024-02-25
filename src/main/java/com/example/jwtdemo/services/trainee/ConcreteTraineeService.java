@@ -2,10 +2,12 @@ package com.example.jwtdemo.services.trainee;
 
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
-import com.example.jwtdemo.models.requests.UpdateTraineeRequest;
+import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
+import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.repositories.TraineeRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,14 @@ public class ConcreteTraineeService implements TraineeService{
 
     private final TraineeRepository traineeRepository;
 
+    private final TraineeMapper mapper;
+
     @Override
     public Optional<Trainee> findByUsername(String username) {
         return traineeRepository.findTraineeByUserUsername(username);
     }
+
+
 
     @Override
     public Collection<Trainee> findAll() {
@@ -48,7 +54,6 @@ public class ConcreteTraineeService implements TraineeService{
         return traineeRepository.findById(id).orElseThrow();
     }
 
-    @SneakyThrows
     @Override
     public Trainee update(UpdateTraineeRequest request)  {
 
@@ -69,8 +74,6 @@ public class ConcreteTraineeService implements TraineeService{
                     .setAddress(request.getAddress());
         }
 
-
-
         traineeRepository.save(trainee);
 
         logger.info("updated trainee with ID: {}", request.getId());
@@ -78,5 +81,17 @@ public class ConcreteTraineeService implements TraineeService{
         return traineeRepository.findById(request.getId()).orElseThrow();
 
 
+    }
+    @Override
+    public RegistrationResponse create(RegistrationRequest request) {
+
+        var trainee = mapper.apply((TraineeRegistrationRequest) request);
+
+
+        traineeRepository.save(trainee);
+        return RegistrationResponse.builder()
+                .username(trainee.getUser().getUsername())
+                .password(trainee.getUser().getPassword())
+                .build();
     }
 }

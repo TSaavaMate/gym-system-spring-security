@@ -2,7 +2,10 @@ package com.example.jwtdemo.services.trainer;
 
 import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
-import com.example.jwtdemo.models.requests.UpdateTrainerRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
+import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
+import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.repositories.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,6 +20,7 @@ import java.util.Optional;
 public class ConcreteTrainerService implements TrainerService{
     private final Logger logger = LoggerFactory.getLogger(ConcreteTrainerService.class);
     private final TrainerRepository trainerRepository;
+    private final TrainerMapper mapper;
     @Override
     public Optional<Trainer> findByUsername(String username) {
         return trainerRepository.findTrainerByUserUsername(username);
@@ -69,6 +73,18 @@ public class ConcreteTrainerService implements TrainerService{
 
         return trainerRepository.findById(request.getId()).orElseThrow();
 
+    }
+
+    @Override
+    public RegistrationResponse create(RegistrationRequest request) {
+        var trainer = mapper.apply((TrainerRegistrationRequest) request);
+
+        trainerRepository.save(trainer);
+
+        return RegistrationResponse.builder()
+                .username(trainer.getUser().getUsername())
+                .password(trainer.getUser().getPassword())
+                .build();
     }
 
 

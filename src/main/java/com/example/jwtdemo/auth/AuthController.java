@@ -1,8 +1,8 @@
 package com.example.jwtdemo.auth;
 
-import com.example.jwtdemo.models.requests.AuthenticationRequest;
-import com.example.jwtdemo.models.requests.ChangePasswordRequest;
-import com.example.jwtdemo.models.requests.RegisterRequest;
+import com.example.jwtdemo.models.requests.authRequest.AuthenticationRequest;
+import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+            @RequestBody UserRegistrationRequest request
     ){
         return ResponseEntity.ok(service.register(request));
     }

@@ -2,9 +2,9 @@ package com.example.jwtdemo.auth;
 
 import com.example.jwtdemo.config.JwtTokenService;
 import com.example.jwtdemo.entities.User;
-import com.example.jwtdemo.models.requests.AuthenticationRequest;
-import com.example.jwtdemo.models.requests.ChangePasswordRequest;
-import com.example.jwtdemo.models.requests.RegisterRequest;
+import com.example.jwtdemo.models.requests.authRequest.AuthenticationRequest;
+import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import com.example.jwtdemo.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +26,14 @@ public class AuthenticateService {
 
     private final AuthenticationManager authManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(UserRegistrationRequest request) {
 
-        String username = credentialConfigurer.generateUniqueUsername(request.getFirstName(), request.getLastName());
+        String username = credentialConfigurer.generateUniqueUsername(request.getFirstname(), request.getLastname());
         String encoded = passwordEncoder.encode(request.getPassword());
 
         var user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .firstName(request.getFirstname())
+                .lastName(request.getLastname())
                 .email(request.getEmail())
                 .username(username)
                 .password(encoded)

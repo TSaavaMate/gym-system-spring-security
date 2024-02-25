@@ -10,6 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class Trainer {
+    public Trainer(User user, String specialization) {
+        this.user = user;
+        this.specialization = specialization;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

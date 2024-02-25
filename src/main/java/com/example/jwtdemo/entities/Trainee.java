@@ -15,6 +15,12 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class Trainee {
+    public Trainee(@NonNull Date dateOfBirth, @NonNull String address, User user) {
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+        this.user = user;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

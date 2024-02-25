@@ -2,7 +2,7 @@ package com.example.jwtdemo.services;
 
 import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.entities.User;
-import com.example.jwtdemo.models.requests.UpdateTrainerRequest;
+import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
 import com.example.jwtdemo.repositories.TrainerRepository;
 import com.example.jwtdemo.services.trainer.ConcreteTrainerService;
 import org.junit.jupiter.api.Test;

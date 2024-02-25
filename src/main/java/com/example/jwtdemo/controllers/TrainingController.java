@@ -1,8 +1,8 @@
 package com.example.jwtdemo.controllers;
 
 import com.example.jwtdemo.entities.Training;
-import com.example.jwtdemo.models.requests.TraineeTrainingRequest;
-import com.example.jwtdemo.models.requests.TrainerTrainingRequest;
+import com.example.jwtdemo.models.requests.trainingFilterRequest.TraineeTrainingRequest;
+import com.example.jwtdemo.models.requests.trainingFilterRequest.TrainerTrainingRequest;
 import com.example.jwtdemo.services.training.TrainingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
