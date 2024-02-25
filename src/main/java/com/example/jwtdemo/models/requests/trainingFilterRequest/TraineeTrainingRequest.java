@@ -1,4 +1,4 @@
-package com.example.jwtdemo.models.requests;
+package com.example.jwtdemo.models.requests.trainingFilterRequest;
 
 import com.example.jwtdemo.entities.TrainingType;
 import lombok.AllArgsConstructor;

@@ -2,9 +2,9 @@ package com.example.jwtdemo.services;
 
 import com.example.jwtdemo.auth.AuthenticateService;
 import com.example.jwtdemo.entities.User;
-import com.example.jwtdemo.models.requests.AuthenticationRequest;
-import com.example.jwtdemo.models.requests.ChangePasswordRequest;
-import com.example.jwtdemo.models.requests.RegisterRequest;
+import com.example.jwtdemo.models.requests.authRequest.AuthenticationRequest;
+import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import com.example.jwtdemo.repositories.UserRepository;
 import com.example.jwtdemo.config.JwtTokenService;
@@ -47,10 +47,10 @@ public class AuthServiceTest {
     @Test
     public void testRegister() {
 
-        RegisterRequest request = RegisterRequest
+        UserRegistrationRequest request = UserRegistrationRequest
                 .builder()
-                .firstName("firstname")
-                .lastName("lastname")
+                .firstname("firstname")
+                .lastname("lastname")
                 .email("em.email@.com")
                 .password("strongPass")
                 .IsActive(true)

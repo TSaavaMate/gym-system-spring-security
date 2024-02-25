@@ -1,18 +1,15 @@
-package com.example.jwtdemo.models.requests;
+package com.example.jwtdemo.models.requests.updateRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateTraineeRequest {
+public class UpdateTrainerRequest {
     private Long id;
-    private Date date_of_birth;
-    private String address;
+    private String specialization;
 }
