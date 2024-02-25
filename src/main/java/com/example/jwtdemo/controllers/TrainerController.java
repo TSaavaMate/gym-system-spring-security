@@ -1,6 +1,5 @@
 package com.example.jwtdemo.controllers;
 
-import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.models.dto.TrainerDto;
 import com.example.jwtdemo.models.profiles.TrainerProfile;
 import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController

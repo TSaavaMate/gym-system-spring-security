@@ -1,18 +1,13 @@
 package com.example.jwtdemo.controllers;
 
-import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.models.dto.TraineeDto;
-import com.example.jwtdemo.models.profiles.TrainerProfile;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
-import com.example.jwtdemo.models.requests.trainerFilterRequest.ActiveTrainersRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.services.trainee.TraineeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
 
 @RestController
 @RequestMapping("api/v1/trainee")
