@@ -5,6 +5,8 @@ import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.requests.UpdateTrainerRequest;
 import com.example.jwtdemo.repositories.TrainerRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -13,6 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ConcreteTrainerService implements TrainerService{
+    private final Logger logger = LoggerFactory.getLogger(ConcreteTrainerService.class);
     private final TrainerRepository trainerRepository;
     @Override
     public Optional<Trainer> findByUsername(String username) {
@@ -26,7 +29,9 @@ public class ConcreteTrainerService implements TrainerService{
 
     @Override
     public void delete(Long id) {
+
         trainerRepository.deleteById(id);
+        logger.info("deleted trainee with ID: {}", id);
     }
 
     @Override
@@ -43,7 +48,10 @@ public class ConcreteTrainerService implements TrainerService{
     @Override
     public Trainer update(UpdateTrainerRequest request) {
         var trainer = trainerRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("not found trainer with id :" + request.getId()));
+                .orElseThrow(() -> {
+                    logger.warn("not found trainer with id : {}" , request.getId());
+                    return new ResourceNotFoundException("not found trainer with id :" + request.getId());
+                });
 
         if (request.getSpecialization() != null){
             trainer
@@ -56,6 +64,8 @@ public class ConcreteTrainerService implements TrainerService{
 
 
         trainerRepository.save(trainer);
+
+        logger.info("updated training with ID: {}", request.getId());
 
         return trainerRepository.findById(request.getId()).orElseThrow();
 

@@ -6,6 +6,8 @@ import com.example.jwtdemo.models.requests.UpdateTraineeRequest;
 import com.example.jwtdemo.repositories.TraineeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ConcreteTraineeService implements TraineeService{
+    private final Logger logger = LoggerFactory.getLogger(ConcreteTraineeService.class);
 
     private final TraineeRepository traineeRepository;
 
@@ -31,15 +34,17 @@ public class ConcreteTraineeService implements TraineeService{
     public void delete(Long id) {
 
         traineeRepository.deleteById(id);
+        logger.info("deleted trainee with ID: {}", id);
     }
     @Override
     public Trainee setActiveState(Long id,Boolean state) {
         Trainee trainee = traineeRepository.findById(id).orElseThrow();
 
+        logger.info("found trainee with {}", id);
         trainee.getUser().setIsActive(state);
 
         traineeRepository.save(trainee);
-
+        logger.info("updated trainee status with {}" , state);
         return traineeRepository.findById(id).orElseThrow();
     }
 
@@ -48,7 +53,10 @@ public class ConcreteTraineeService implements TraineeService{
     public Trainee update(UpdateTraineeRequest request)  {
 
         var trainee = traineeRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("not found trainer with id :" + request.getId()));
+                .orElseThrow(() -> {
+                    logger.warn("not found trainee with id : {}" , request.getId());
+                    return new ResourceNotFoundException("not found trainee with id :" + request.getId());
+                });
 
         if (request.getDate_of_birth() != null){
             trainee
@@ -64,6 +72,8 @@ public class ConcreteTraineeService implements TraineeService{
 
 
         traineeRepository.save(trainee);
+
+        logger.info("updated trainee with ID: {}", request.getId());
 
         return traineeRepository.findById(request.getId()).orElseThrow();
 
