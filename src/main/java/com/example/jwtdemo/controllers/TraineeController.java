@@ -2,7 +2,9 @@ package com.example.jwtdemo.controllers;
 
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.models.dto.TraineeDto;
+import com.example.jwtdemo.models.profiles.TrainerProfile;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
+import com.example.jwtdemo.models.requests.trainerFilterRequest.ActiveTrainersRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.services.trainee.TraineeService;
@@ -19,10 +21,7 @@ public class TraineeController {
 
     private final TraineeService traineeService;
 
-    @GetMapping
-    public ResponseEntity<Collection<Trainee>> getAll() {
-        return ResponseEntity.ok(traineeService.findAll());
-    }
+
 
     @PostMapping
     public ResponseEntity<RegistrationResponse> create(@RequestBody TraineeRegistrationRequest request){
@@ -36,15 +35,6 @@ public class TraineeController {
     @PutMapping
     public ResponseEntity<TraineeDto> updateTrainee(@RequestBody UpdateTraineeRequest request) {
         return ResponseEntity.ok(traineeService.update(request));
-    }
-
-    @GetMapping("/activate/{id}")
-    public ResponseEntity<Trainee> activate(@PathVariable Long id) {
-        return ResponseEntity.ok(traineeService.setActiveState(id,true));
-    }
-    @GetMapping("/deactivate/{id}")
-    public ResponseEntity<Trainee> deActivate(@PathVariable Long id) {
-        return ResponseEntity.ok(traineeService.setActiveState(id,false));
     }
 
 

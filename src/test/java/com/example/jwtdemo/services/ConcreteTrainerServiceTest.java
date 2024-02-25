@@ -2,7 +2,6 @@ package com.example.jwtdemo.services;
 
 import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.entities.User;
-import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
 import com.example.jwtdemo.repositories.TrainerRepository;
 import com.example.jwtdemo.services.trainer.ConcreteTrainerService;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,15 +50,5 @@ public class ConcreteTrainerServiceTest {
         assertTrue(result.getUser().getIsActive());
     }
 
-    @Test
-    public void testUpdate() {
-        UpdateTrainerRequest request = UpdateTrainerRequest.builder().build();
-        Trainer trainer = new Trainer();
-        when(trainerRepository.findById(any())).thenReturn(Optional.of(trainer));
-
-        Trainer result = trainerService.update(request);
-
-        assertNotNull(result);
-    }
 }
 

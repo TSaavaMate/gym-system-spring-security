@@ -3,8 +3,10 @@ package com.example.jwtdemo.services.trainee;
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.dto.TraineeDto;
+import com.example.jwtdemo.models.profiles.TrainerProfile;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
+import com.example.jwtdemo.models.requests.trainerFilterRequest.ActiveTrainersRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.repositories.TraineeRepository;
@@ -117,6 +119,8 @@ public class ConcreteTraineeService implements TraineeService{
 
 
     }
+
+
     @Override
     public RegistrationResponse create(RegistrationRequest request) {
 

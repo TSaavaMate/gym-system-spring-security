@@ -1,22 +1,28 @@
 package com.example.jwtdemo.services.trainer;
 
 import com.example.jwtdemo.entities.Trainer;
+import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.dto.TrainerDto;
+import com.example.jwtdemo.models.profiles.TrainerProfile;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
+import com.example.jwtdemo.models.requests.trainerFilterRequest.ActiveTrainersRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.repositories.TrainerRepository;
 import com.example.jwtdemo.services.trainer.mapper.TrainerDtoMapper;
+import com.example.jwtdemo.services.trainer.mapper.TrainerProfileMapper;
 import com.example.jwtdemo.services.trainer.mapper.TrainerRequestMapper;
 import com.example.jwtdemo.services.trainer.trainerTraining.TrainerTrainingService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +33,7 @@ public class ConcreteTrainerService implements TrainerService{
     private final TrainerRepository trainerRepository;
     private final TrainerRequestMapper requestMapper;
     private final TrainerDtoMapper dtoMapper;
+    private final TrainerProfileMapper profileMapper;
 
     private final TrainerTrainingService trainerTrainingService;
 
@@ -72,28 +79,42 @@ public class ConcreteTrainerService implements TrainerService{
     }
 
     @Override
-    public Trainer update(UpdateTrainerRequest request) {
-        var trainer = trainerRepository.findById(request.getId())
+    public TrainerDto update(@Validated UpdateTrainerRequest request) {
+        var trainer = trainerRepository.findTrainerByUserUsername(request.getUsername())
                 .orElseThrow(() -> {
-                    logger.warn("not found trainer with id : {}" , request.getId());
-                    return new ResourceNotFoundException("not found trainer with id :" + request.getId());
+                    logger.warn("not found trainer with username : {}" , request.getUsername());
+                    return new ResourceNotFoundException("not found trainer with username :" + request.getUsername());
                 });
 
-        if (request.getSpecialization() != null){
-            trainer
-                    .setSpecialization(request.getSpecialization());
-        }else{
 
-            return trainer;
-        }
+        User user = trainer.getUser();
+        user.setUsername(request.getUsername());
+        user.setLastName(request.getLastname());
+        user.setFirstName(request.getFirstname());
+        user.setIsActive(request.getIsActive());
 
-
+        trainer.setUser(user);
+        trainer.setSpecialization(request.getSpecialization());
 
         trainerRepository.save(trainer);
 
-        logger.info("updated training with ID: {}", request.getId());
+        logger.info("updated training with ID: {}", trainer.getId());
 
-        return trainerRepository.findById(request.getId()).orElseThrow();
+        var trainees = trainerTrainingService.getTrainerTrainees(trainer);
+
+        var trainerDto = dtoMapper.apply(trainer);
+        trainerDto.setTrainees(trainees);
+
+        return trainerDto;
+
+
+    }
+
+    @Override
+    public List<TrainerProfile> getActiveTrainers(ActiveTrainersRequest request) {
+        return trainerRepository.findTrainersByUserUsernameAndUserIsActive(request.getUsername(),true).stream()
+                .map(profileMapper)
+                .toList();
 
     }
 
