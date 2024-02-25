@@ -1,6 +1,7 @@
 package com.example.jwtdemo.controllers;
 
 import com.example.jwtdemo.entities.Trainer;
+import com.example.jwtdemo.models.dto.TrainerDto;
 import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/trainer")
@@ -20,7 +20,7 @@ public class TrainerController {
     private final TrainerService trainerService;
 
     @GetMapping("/{username}")
-    public ResponseEntity<Optional<Trainer>> findByUsername(@PathVariable String username) {
+    public ResponseEntity<TrainerDto> findByUsername(@PathVariable String username) {
         return ResponseEntity.ok(trainerService.findByUsername(username));
     }
 

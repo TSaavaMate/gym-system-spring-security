@@ -2,6 +2,7 @@ package com.example.jwtdemo.services.trainee;
 
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
+import com.example.jwtdemo.models.dto.TraineeDto;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
@@ -22,11 +23,21 @@ public class ConcreteTraineeService implements TraineeService{
 
     private final TraineeRepository traineeRepository;
 
-    private final TraineeMapper mapper;
+    private final TraineeRequestMapper requestMapper;
+
+    private final TraineeDtoMapper dtoMapper;
 
     @Override
-    public Optional<Trainee> findByUsername(String username) {
-        return traineeRepository.findTraineeByUserUsername(username);
+    public Optional<Trainee> findById(Long id) {
+        return traineeRepository.findById(id);
+    }
+
+    @Override
+    public TraineeDto findByUsername(String username) {
+        var trainee = traineeRepository.findTraineeByUserUsername(username)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        return dtoMapper.apply(trainee);
     }
 
 
@@ -85,7 +96,7 @@ public class ConcreteTraineeService implements TraineeService{
     @Override
     public RegistrationResponse create(RegistrationRequest request) {
 
-        var trainee = mapper.apply((TraineeRegistrationRequest) request);
+        var trainee = requestMapper.apply((TraineeRegistrationRequest) request);
 
 
         traineeRepository.save(trainee);

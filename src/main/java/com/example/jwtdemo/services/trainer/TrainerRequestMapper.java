@@ -1,8 +1,8 @@
-package com.example.jwtdemo.services.trainee;
+package com.example.jwtdemo.services.trainer;
 
-import com.example.jwtdemo.entities.Trainee;
+import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
-import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
+import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
 import com.example.jwtdemo.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,12 +11,12 @@ import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
-public class TraineeMapper implements Function<TraineeRegistrationRequest, Trainee> {
+public class TrainerRequestMapper implements Function<TrainerRegistrationRequest, Trainer> {
     private final UserRepository userRepository;
     @Override
-    public Trainee apply(TraineeRegistrationRequest request) {
+    public Trainer apply(TrainerRegistrationRequest request) {
         var user = userRepository.findByFirstNameAndLastName(request.getFirstname(), request.getLastname())
                 .orElseThrow(ResourceNotFoundException::new);
-        return new Trainee(request.getDateOfBirth(),request.getAddress(),user);
+        return new Trainer(user,request.getSpecialization());
     }
 }

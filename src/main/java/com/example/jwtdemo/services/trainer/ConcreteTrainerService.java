@@ -2,6 +2,7 @@ package com.example.jwtdemo.services.trainer;
 
 import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
+import com.example.jwtdemo.models.dto.TrainerDto;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
@@ -20,10 +21,20 @@ import java.util.Optional;
 public class ConcreteTrainerService implements TrainerService{
     private final Logger logger = LoggerFactory.getLogger(ConcreteTrainerService.class);
     private final TrainerRepository trainerRepository;
-    private final TrainerMapper mapper;
+    private final TrainerRequestMapper requestMapper;
+    private final TrainerDtoMapper dtoMapper;
+
     @Override
-    public Optional<Trainer> findByUsername(String username) {
-        return trainerRepository.findTrainerByUserUsername(username);
+    public Optional<Trainer> findById(Long id) {
+        return trainerRepository.findById(id);
+    }
+
+    @Override
+    public TrainerDto findByUsername(String username) {
+        var trainer = trainerRepository.findTrainerByUserUsername(username)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        return dtoMapper.apply(trainer);
     }
 
     @Override
@@ -77,7 +88,7 @@ public class ConcreteTrainerService implements TrainerService{
 
     @Override
     public RegistrationResponse create(RegistrationRequest request) {
-        var trainer = mapper.apply((TrainerRegistrationRequest) request);
+        var trainer = requestMapper.apply((TrainerRegistrationRequest) request);
 
         trainerRepository.save(trainer);
 
