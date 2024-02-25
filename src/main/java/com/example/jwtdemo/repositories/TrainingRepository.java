@@ -19,7 +19,7 @@ public interface TrainingRepository extends JpaRepository<Training,Long> {
             "AND (:trainerName IS NULL OR t.trainer.user.firstName = :trainerName) " +
             "AND (:trainingType IS NULL OR t.trainingType.trainingTypeName = :trainingType)")
     List<Training> findByTraineeAndCriteria(
-            @Param("trainee") String username,
+            @Param("username") String username,
             @Param("periodFrom") Date periodFrom,
             @Param("periodTo") Date periodTo,
             @Param("trainerName") String trainerName,
@@ -33,7 +33,7 @@ public interface TrainingRepository extends JpaRepository<Training,Long> {
             "AND (:trainingType IS NULL OR t.trainingType.trainingTypeName = :trainingType)")
 
     List<Training> findByTrainerAndCriteria(
-            @Param("trainer") String username,
+            @Param("username") String username,
             @Param("periodFrom") Date periodFrom,
             @Param("periodTo") Date periodTo,
             @Param("traineeName") String traineeName,

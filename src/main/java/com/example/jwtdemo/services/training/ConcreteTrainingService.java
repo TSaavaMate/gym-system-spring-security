@@ -32,7 +32,7 @@ public class ConcreteTrainingService implements TrainingService {
                 request.getUsername(),
                 request.getPeriodFrom(),
                 request.getPeriodTo(),
-                request.getTraineeFirstName(),
+                request.getTrainerFirstName(),
                 request.getTrainingType().getTrainingTypeName()
         );
     }
