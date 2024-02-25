@@ -34,7 +34,7 @@ public class TraineeController {
     }
 
     @PutMapping
-    public ResponseEntity<Trainee> updateTrainee(@RequestBody UpdateTraineeRequest request) {
+    public ResponseEntity<TraineeDto> updateTrainee(@RequestBody UpdateTraineeRequest request) {
         return ResponseEntity.ok(traineeService.update(request));
     }
 
@@ -51,7 +51,7 @@ public class TraineeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
         traineeService.delete(id);
-        return ResponseEntity.ok("deleted");
+        return ResponseEntity.ok().build();
     }
 
 

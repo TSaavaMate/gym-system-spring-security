@@ -9,6 +9,6 @@ public interface TraineeService  extends DaoService<Trainee, TraineeDto,Long> {
 
     Trainee setActiveState(Long id,Boolean state);
 
-    Trainee update(UpdateTraineeRequest request);
+    TraineeDto update(UpdateTraineeRequest request);
 
 }

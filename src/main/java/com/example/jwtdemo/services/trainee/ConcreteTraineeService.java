@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -66,30 +67,42 @@ public class ConcreteTraineeService implements TraineeService{
     }
 
     @Override
-    public Trainee update(UpdateTraineeRequest request)  {
+    public TraineeDto update(@Validated UpdateTraineeRequest request)  {
 
-        var trainee = traineeRepository.findById(request.getId())
+        var trainee = traineeRepository.findTraineeByUserUsername(request.getUsername())
                 .orElseThrow(() -> {
-                    logger.warn("not found trainee with id : {}" , request.getId());
-                    return new ResourceNotFoundException("not found trainee with id :" + request.getId());
+                    logger.warn("not found trainee with username : {}" , request.getUsername());
+                    return new ResourceNotFoundException("not found trainee with username :" + request.getUsername());
                 });
 
-        if (request.getDate_of_birth() != null){
-            trainee
-                    .setDateOfBirth(request.getDate_of_birth());
+        var date = request.getDate_of_birth();
 
+        if (date != null) {
+            trainee.setDateOfBirth(request.getDate_of_birth());
         }
 
-        if (request.getAddress() != null){
-            trainee
-                    .setAddress(request.getAddress());
+        var address = request.getAddress();
+        if (address != null){
+            trainee.setAddress(request.getAddress());
         }
+
+        var user = trainee.getUser();
+
+        user.setFirstName(request.getFirstname());
+        user.setLastName(request.getLastname());
+        user.setIsActive(request.getIsActive());
+
+        trainee.setUser(user);
+
+
 
         traineeRepository.save(trainee);
 
-        logger.info("updated trainee with ID: {}", request.getId());
+        logger.info("updated trainee with ID: {}", trainee.getId());
 
-        return traineeRepository.findById(request.getId()).orElseThrow();
+        var updated = traineeRepository.findById(trainee.getId()).orElseThrow();
+
+        return dtoMapper.apply(updated);
 
 
     }
