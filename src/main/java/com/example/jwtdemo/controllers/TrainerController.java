@@ -24,7 +24,6 @@ public class TrainerController {
 
     @GetMapping("findAll")
     public ResponseEntity<Collection<Trainer>> getAll() {
-
         return ResponseEntity.ok(trainerService.findAll());
     }
 

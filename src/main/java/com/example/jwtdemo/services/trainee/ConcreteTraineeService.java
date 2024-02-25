@@ -1,11 +1,11 @@
 package com.example.jwtdemo.services.trainee;
 
 import com.example.jwtdemo.entities.Trainee;
+import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.requests.UpdateTraineeRequest;
 import com.example.jwtdemo.repositories.TraineeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -47,7 +47,8 @@ public class ConcreteTraineeService implements TraineeService{
     @Override
     public Trainee update(UpdateTraineeRequest request)  {
 
-        var trainee = traineeRepository.findById(request.getId()).orElseThrow(BadRequestException::new);
+        var trainee = traineeRepository.findById(request.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("not found trainer with id :" + request.getId()));
 
         if (request.getDate_of_birth() != null){
             trainee

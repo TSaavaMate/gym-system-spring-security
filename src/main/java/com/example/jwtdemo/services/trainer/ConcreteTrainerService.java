@@ -1,6 +1,7 @@
 package com.example.jwtdemo.services.trainer;
 
 import com.example.jwtdemo.entities.Trainer;
+import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.requests.UpdateTrainerRequest;
 import com.example.jwtdemo.repositories.TrainerRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +42,12 @@ public class ConcreteTrainerService implements TrainerService{
 
     @Override
     public Trainer update(UpdateTrainerRequest request) {
-        var trainer = trainerRepository.findById(request.getId()).orElseThrow();
+        var trainer = trainerRepository.findById(request.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("not found trainer with id :" + request.getId()));
 
         if (request.getSpecialization() != null){
             trainer
                     .setSpecialization(request.getSpecialization());
-
         }else{
 
             return trainer;
