@@ -3,11 +3,14 @@ package com.example.jwtdemo.services.trainee;
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.dto.TraineeDto;
-import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
+import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.repositories.TraineeRepository;
+import com.example.jwtdemo.services.trainee.mapper.TraineeDtoMapper;
+import com.example.jwtdemo.services.trainee.mapper.TraineeRequestMapper;
+import com.example.jwtdemo.services.trainee.traineeTraining.TraineeTrainingService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,8 @@ public class ConcreteTraineeService implements TraineeService{
 
     private final TraineeRepository traineeRepository;
 
+    private final TraineeTrainingService traineeTrainingService;
+
     private final TraineeRequestMapper requestMapper;
 
     private final TraineeDtoMapper dtoMapper;
@@ -38,7 +43,13 @@ public class ConcreteTraineeService implements TraineeService{
         var trainee = traineeRepository.findTraineeByUserUsername(username)
                 .orElseThrow(ResourceNotFoundException::new);
 
-        return dtoMapper.apply(trainee);
+        var trainers = traineeTrainingService.getTraineeTrainers(trainee);
+
+        var traineeDto = dtoMapper.apply(trainee);
+
+        traineeDto.setTrainers(trainers);
+
+        return traineeDto;
     }
 
 

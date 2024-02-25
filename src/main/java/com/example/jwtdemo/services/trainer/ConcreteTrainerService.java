@@ -8,6 +8,9 @@ import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrati
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.repositories.TrainerRepository;
+import com.example.jwtdemo.services.trainer.mapper.TrainerDtoMapper;
+import com.example.jwtdemo.services.trainer.mapper.TrainerRequestMapper;
+import com.example.jwtdemo.services.trainer.trainerTraining.TrainerTrainingService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +23,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ConcreteTrainerService implements TrainerService{
     private final Logger logger = LoggerFactory.getLogger(ConcreteTrainerService.class);
+
     private final TrainerRepository trainerRepository;
     private final TrainerRequestMapper requestMapper;
     private final TrainerDtoMapper dtoMapper;
+
+    private final TrainerTrainingService trainerTrainingService;
 
     @Override
     public Optional<Trainer> findById(Long id) {
@@ -34,7 +40,12 @@ public class ConcreteTrainerService implements TrainerService{
         var trainer = trainerRepository.findTrainerByUserUsername(username)
                 .orElseThrow(ResourceNotFoundException::new);
 
-        return dtoMapper.apply(trainer);
+        var trainees = trainerTrainingService.getTrainerTrainees(trainer);
+
+        var trainerDto = dtoMapper.apply(trainer);
+        trainerDto.setTrainees(trainees);
+
+        return trainerDto;
     }
 
     @Override

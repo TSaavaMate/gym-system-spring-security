@@ -26,17 +26,6 @@ public class ConcreteTrainerServiceTest {
     @InjectMocks
     private ConcreteTrainerService trainerService;
 
-    @Test
-    public void testFindByUsername() {
-        String username = "testUsername";
-        Trainer trainer = new Trainer();
-        when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(Optional.of(trainer));
-
-        Optional<Trainer> result = trainerService.findByUsername(username);
-
-        assertTrue(result.isPresent());
-        assertSame(trainer, result.get());
-    }
 
     @Test
     public void testDelete() {

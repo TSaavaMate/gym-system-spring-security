@@ -1,6 +1,5 @@
 package com.example.jwtdemo.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -37,10 +35,6 @@ public class Trainee {
 
 
 
-    @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Training> trainings;
-
     @Override
     public String toString() {
         return "Trainee{" +
@@ -48,7 +42,6 @@ public class Trainee {
                 ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
                 ", user=" + user +
-                ", trainings=" + trainings +
                 '}';
     }
 }

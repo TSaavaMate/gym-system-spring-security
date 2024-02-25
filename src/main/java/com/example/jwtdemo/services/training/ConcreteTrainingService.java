@@ -14,26 +14,14 @@ import java.util.List;
 public class ConcreteTrainingService implements TrainingService {
     private final TrainingRepository trainingRepository;
 
+
     @Override
     public List<Training> getTraineeTrainings(TraineeTrainingRequest request) {
-        return trainingRepository.findByTraineeAndCriteria(
-                request.getUsername(),
-                request.getPeriodFrom(),
-                request.getPeriodTo(),
-                request.getTrainerFirstName(),
-                request.getTrainingType().getTrainingTypeName()
-        );
+        return null;
     }
 
     @Override
     public List<Training> getTrainerTrainings(TrainerTrainingRequest request) {
-
-        return trainingRepository.findByTrainerAndCriteria(
-                request.getUsername(),
-                request.getPeriodFrom(),
-                request.getPeriodTo(),
-                request.getTrainerFirstName(),
-                request.getTrainingType().getTrainingTypeName()
-        );
+        return null;
     }
 }

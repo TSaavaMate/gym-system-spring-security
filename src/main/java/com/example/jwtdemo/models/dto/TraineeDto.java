@@ -1,5 +1,6 @@
 package com.example.jwtdemo.models.dto;
 
+import com.example.jwtdemo.models.profiles.TrainerProfile;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +15,5 @@ public class TraineeDto {
     private Date dateOfBirth;
     private String address;
     private Boolean isActive;
-    private List<TrainerDto> trainers;
+    private List<TrainerProfile> trainers;
 }

@@ -1,17 +1,16 @@
-package com.example.jwtdemo.services.trainer;
+package com.example.jwtdemo.services.trainer.mapper;
 
 import com.example.jwtdemo.entities.Trainer;
-import com.example.jwtdemo.models.dto.TrainerDto;
+import com.example.jwtdemo.models.profiles.TrainerProfile;
+import com.example.jwtdemo.services.ProfileMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.function.Function;
-
 @Component
-public class TrainerDtoMapper implements Function<Trainer, TrainerDto> {
+public class TrainerProfileMapper implements ProfileMapper<Trainer, TrainerProfile> {
 
     @Override
-    public TrainerDto apply(Trainer trainer) {
-        return TrainerDto.builder()
+    public TrainerProfile apply(Trainer trainer) {
+        return TrainerProfile.builder()
                 .firstname(trainer.getUser().getFirstName())
                 .lastname(trainer.getUser().getLastName())
                 .username(trainer.getUser().getUsername())

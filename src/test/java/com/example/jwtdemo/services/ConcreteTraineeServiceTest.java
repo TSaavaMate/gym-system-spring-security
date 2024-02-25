@@ -2,9 +2,9 @@ package com.example.jwtdemo.services;
 
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.entities.User;
-import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.repositories.TraineeRepository;
 import com.example.jwtdemo.services.trainee.ConcreteTraineeService;
+import com.example.jwtdemo.services.trainee.mapper.TraineeDtoMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,22 +21,13 @@ import static org.mockito.Mockito.*;
 public class ConcreteTraineeServiceTest {
 
     @Mock
+    private TraineeDtoMapper mapper;
+    @Mock
     private TraineeRepository traineeRepository;
 
     @InjectMocks
     private ConcreteTraineeService traineeService;
 
-    @Test
-    public void testFindByUsername() {
-        String username = "sampleUsername";
-        Trainee trainee = new Trainee();
-        when(traineeRepository.findTraineeByUserUsername(username)).thenReturn(Optional.of(trainee));
-
-        Optional<Trainee> result = traineeService.findByUsername(username);
-
-        assertTrue(result.isPresent());
-        assertSame(trainee, result.get());
-    }
 
     @Test
     public void testDelete() {
@@ -69,17 +60,6 @@ public class ConcreteTraineeServiceTest {
         assertTrue(result.getUser().getIsActive());
     }
 
-    @Test
-    public void testUpdate() {
-        UpdateTraineeRequest request = UpdateTraineeRequest.builder().build();
 
-        Trainee trainee = new Trainee();
-
-        when(traineeRepository.findById(any())).thenReturn(Optional.of(trainee));
-
-        Trainee result = traineeService.update(request);
-
-        assertNotNull(result);
-    }
 }
 

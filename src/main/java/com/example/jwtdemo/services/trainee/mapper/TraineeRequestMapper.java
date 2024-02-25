@@ -1,4 +1,4 @@
-package com.example.jwtdemo.services.trainee;
+package com.example.jwtdemo.services.trainee.mapper;
 
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
