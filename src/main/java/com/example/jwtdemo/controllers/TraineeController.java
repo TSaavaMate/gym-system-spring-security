@@ -16,8 +16,6 @@ public class TraineeController {
 
     private final TraineeService traineeService;
 
-
-
     @PostMapping
     public ResponseEntity<RegistrationResponse> create(@RequestBody TraineeRegistrationRequest request){
         return ResponseEntity.ok(traineeService.create(request));
