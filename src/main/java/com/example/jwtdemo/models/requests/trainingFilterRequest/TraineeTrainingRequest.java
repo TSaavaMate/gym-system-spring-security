@@ -17,5 +17,5 @@ public class TraineeTrainingRequest {
     private Date periodFrom;
     private Date periodTo;
     private String trainerFirstName;
-    private TrainingType trainingType;
+    private String trainingTypeName;
 }
