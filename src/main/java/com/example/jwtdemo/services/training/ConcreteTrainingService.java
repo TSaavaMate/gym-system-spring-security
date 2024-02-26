@@ -1,9 +1,14 @@
 package com.example.jwtdemo.services.training;
 
+import com.example.jwtdemo.entities.Training;
+import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.dto.TraineeTrainingDto;
 import com.example.jwtdemo.models.dto.TrainerTrainingDto;
+import com.example.jwtdemo.models.requests.registrationRequest.TrainingRegistrationRequest;
 import com.example.jwtdemo.models.requests.trainingFilterRequest.TraineeTrainingRequest;
 import com.example.jwtdemo.models.requests.trainingFilterRequest.TrainerTrainingRequest;
+import com.example.jwtdemo.repositories.TraineeRepository;
+import com.example.jwtdemo.repositories.TrainerRepository;
 import com.example.jwtdemo.repositories.TrainingRepository;
 import com.example.jwtdemo.services.training.mapper.TraineeTrainingDtoMapper;
 import com.example.jwtdemo.services.training.mapper.TrainerTrainingDtoMapper;
@@ -16,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConcreteTrainingService implements TrainingService {
     private final TrainingRepository trainingRepository;
+    private final TraineeRepository traineeRepository;
+    private final TrainerRepository trainerRepository;
 
     private final TraineeTrainingDtoMapper traineeTrainingMapper;
 
@@ -50,5 +57,25 @@ public class ConcreteTrainingService implements TrainingService {
                 .map(trainerTrainingDtoMapper)
                 .toList();
 
+    }
+
+    @Override
+    public void createTraining(TrainingRegistrationRequest request) {
+        var trainee = traineeRepository.findTraineeByUserUsername(request.getTraineeUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("not found trainee : cannot create training without trainee"));
+
+        var trainer = trainerRepository.findTrainerByUserUsername(request.getTrainerUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("not found trainer : cannot create training without trainer"));
+
+        var training = new Training();
+
+
+        training.setName(request.getName());
+        training.setTrainee(trainee);
+        training.setTrainer(trainer);
+        training.setDate(request.getTrainingDate());
+        training.setDuration(request.getDuration());
+
+        trainingRepository.save(training);
     }
 }

@@ -1,6 +1,5 @@
 package com.example.jwtdemo.models.requests.trainingFilterRequest;
 
-import com.example.jwtdemo.entities.TrainingType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
