@@ -1,8 +1,10 @@
 package com.example.jwtdemo.services.trainee;
 
 import com.example.jwtdemo.entities.Trainee;
+import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.dto.TraineeDto;
+import com.example.jwtdemo.models.requests.patchRequest.PatchTraineeRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
@@ -65,16 +67,17 @@ public class ConcreteTraineeService implements TraineeService{
         traineeRepository.deleteById(id);
         logger.info("deleted trainee with ID: {}", id);
     }
-    @Override
-    public Trainee setActiveState(Long id,Boolean state) {
-        Trainee trainee = traineeRepository.findById(id).orElseThrow();
 
-        logger.info("found trainee with {}", id);
-        trainee.getUser().setIsActive(state);
+
+    @Override
+    public void setActiveState(PatchTraineeRequest request) {
+        var trainee = traineeRepository.findTraineeByUserUsername(request.getUsername())
+                .orElseThrow(ResourceNotFoundException::new);
+
+        User user = trainee.getUser();
+        user.setIsActive(request.getIsActive());
 
         traineeRepository.save(trainee);
-        logger.info("updated trainee status with {}" , state);
-        return traineeRepository.findById(id).orElseThrow();
     }
 
     @Override

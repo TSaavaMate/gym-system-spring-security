@@ -2,6 +2,8 @@ package com.example.jwtdemo.controllers;
 
 import com.example.jwtdemo.models.dto.TrainerDto;
 import com.example.jwtdemo.models.profiles.TrainerProfile;
+import com.example.jwtdemo.models.requests.patchRequest.PatchTraineeRequest;
+import com.example.jwtdemo.models.requests.patchRequest.PatchTrainerRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
 import com.example.jwtdemo.models.requests.trainerFilterRequest.ActiveTrainersRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTrainerRequest;
@@ -30,6 +32,11 @@ public class TrainerController {
         return ResponseEntity.ok(trainerService.create(request));
     }
 
+    @PatchMapping
+    public ResponseEntity<?> updateTrainerState(@RequestBody PatchTrainerRequest request){
+        trainerService.setActiveState(request);
+        return ResponseEntity.ok().build();
+    }
     @GetMapping("/active-trainers")
     public ResponseEntity<List<TrainerProfile>> findActiveTrainers(@RequestBody ActiveTrainersRequest request){
         return ResponseEntity.ok(trainerService.getActiveTrainers(request));

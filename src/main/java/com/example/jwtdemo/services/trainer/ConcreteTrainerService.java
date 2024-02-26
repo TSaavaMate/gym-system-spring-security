@@ -5,6 +5,7 @@ import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.dto.TrainerDto;
 import com.example.jwtdemo.models.profiles.TrainerProfile;
+import com.example.jwtdemo.models.requests.patchRequest.PatchTrainerRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TrainerRegistrationRequest;
 import com.example.jwtdemo.models.requests.trainerFilterRequest.ActiveTrainersRequest;
@@ -66,18 +67,6 @@ public class ConcreteTrainerService implements TrainerService{
         trainerRepository.deleteById(id);
         logger.info("deleted trainee with ID: {}", id);
     }
-
-    @Override
-    public Trainer SetActiveState(Long id, Boolean state) {
-        Trainer trainer = trainerRepository.findById(id).orElseThrow();
-
-        trainer.getUser().setIsActive(state);
-
-        trainerRepository.save(trainer);
-
-        return trainerRepository.findById(id).orElseThrow();
-    }
-
     @Override
     public TrainerDto update(@Validated UpdateTrainerRequest request) {
         var trainer = trainerRepository.findTrainerByUserUsername(request.getUsername())
@@ -116,6 +105,17 @@ public class ConcreteTrainerService implements TrainerService{
                 .map(profileMapper)
                 .toList();
 
+    }
+
+    @Override
+    public void setActiveState(PatchTrainerRequest request) {
+        var trainer = trainerRepository.findTrainerByUserUsername(request.getUsername())
+                .orElseThrow(ResourceNotFoundException::new);
+
+        User user = trainer.getUser();
+        user.setIsActive(request.getIsActive());
+
+        trainerRepository.save(trainer);
     }
 
     @Override

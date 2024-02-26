@@ -1,6 +1,7 @@
 package com.example.jwtdemo.controllers;
 
 import com.example.jwtdemo.models.dto.TraineeDto;
+import com.example.jwtdemo.models.requests.patchRequest.PatchTraineeRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
@@ -28,6 +29,11 @@ public class TraineeController {
     @PutMapping
     public ResponseEntity<TraineeDto> updateTrainee(@RequestBody UpdateTraineeRequest request) {
         return ResponseEntity.ok(traineeService.update(request));
+    }
+    @PatchMapping
+    public ResponseEntity<?> updateTraineeState(@RequestBody PatchTraineeRequest request){
+        traineeService.setActiveState(request);
+        return ResponseEntity.ok().build();
     }
 
 

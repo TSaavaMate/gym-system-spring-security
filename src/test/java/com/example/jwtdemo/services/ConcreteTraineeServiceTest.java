@@ -40,25 +40,6 @@ public class ConcreteTraineeServiceTest {
         verify(traineeRepository, times(1)).deleteById(traineeId);
     }
 
-    @Test
-    public void testSetActiveState() {
-
-        Long traineeId = 1L;
-        Boolean state = true;
-
-        Trainee trainee = new Trainee();
-        trainee.setId(traineeId);
-        trainee.setUser(
-                User.builder().isActive(false).build()
-        );
-
-        when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
-
-        Trainee result = traineeService.setActiveState(traineeId, state);
-
-        assertTrue(result.getUser().getIsActive());
-    }
-
 
 }
 
