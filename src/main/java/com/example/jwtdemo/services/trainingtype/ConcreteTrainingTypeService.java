@@ -1,6 +1,5 @@
 package com.example.jwtdemo.services.trainingtype;
 
-import com.example.jwtdemo.entities.TrainingType;
 import com.example.jwtdemo.models.dto.TrainingTypeDto;
 import com.example.jwtdemo.repositories.TrainingTypeRepository;
 import lombok.RequiredArgsConstructor;
