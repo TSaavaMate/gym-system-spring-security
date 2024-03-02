@@ -1,5 +1,6 @@
 package com.example.jwtdemo.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,18 @@ public class DefaultExceptionHandler {
 
     @ExceptionHandler(InvalidTrainingCreationRequest.class)
     public ResponseEntity<ApiError> handleSqlException(InvalidTrainingCreationRequest ex,
+                                                       HttpServletRequest request){
+        var apiError = new ApiError(
+                request.getRequestURI(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ApiError> handleExpiredJwtException(ExpiredJwtException ex,
                                                        HttpServletRequest request){
         var apiError = new ApiError(
                 request.getRequestURI(),

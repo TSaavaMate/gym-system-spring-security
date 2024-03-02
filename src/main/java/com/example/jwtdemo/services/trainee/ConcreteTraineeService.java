@@ -1,4 +1,6 @@
 package com.example.jwtdemo.services.trainee;
+
+import com.example.jwtdemo.aspect.Loggable;
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
@@ -16,10 +18,7 @@ import com.example.jwtdemo.services.trainee.mapper.TraineeRequestMapper;
 import com.example.jwtdemo.services.trainee.traineeTraining.TraineeTrainingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
@@ -29,42 +28,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Aspect
 public class ConcreteTraineeService implements TraineeService {
 
     private final TraineeRepository traineeRepository;
     private final TraineeTrainingService traineeTrainingService;
     private final TraineeRequestMapper requestMapper;
     private final TraineeDtoMapper dtoMapper;
-
-
-    private final ThreadLocal<String> transactionId = new ThreadLocal<>();
-
-
-    @Pointcut("execution(* com.example.jwtdemo.services.trainee.TraineeService.*(..))")
-    private void serviceMethods() {}
-
-
-    @Before("execution(* com.example.jwtdemo.services.trainee.ConcreteTraineeService.update(..))")
-    public void logTransactionStart(JoinPoint joinPoint) {
-        transactionId.set(String.valueOf(System.currentTimeMillis()));
-        log.info("Transaction {} started for method: {}", transactionId.get(), joinPoint.getSignature().toShortString());
-    }
-
-    @AfterReturning("execution(* com.example.jwtdemo.services.trainee.ConcreteTraineeService.update(..))")
-    public void logTransactionEnd(JoinPoint joinPoint) {
-        log.info("Transaction {} ended for method: {}", transactionId.get(), joinPoint.getSignature().toShortString());
-        transactionId.remove();
-    }
-
-    @AfterReturning(pointcut = "execution(* com.example.jwtdemo.services.trainee.ConcreteTraineeService.*(..))", returning = "result")
-    public void logRestCall(JoinPoint joinPoint, Object result) {
-        String methodName = joinPoint.getSignature().getName();
-        Object[] args = joinPoint.getArgs();
-        String endpoint = joinPoint.getTarget().getClass().getSimpleName() + "." + methodName;
-        log.info("REST call to endpoint: {}, Request: {}, Response: {}", endpoint, args, result);
-    }
-
 
 
     @Override
@@ -109,7 +78,7 @@ public class ConcreteTraineeService implements TraineeService {
     }
 
     @Override
-    @Transactional
+    @Loggable
     public TraineeDto update(@Validated UpdateTraineeRequest request) {
         var trainee = traineeRepository.findTraineeByUserUsername(request.getUsername())
                 .orElseThrow(() -> {

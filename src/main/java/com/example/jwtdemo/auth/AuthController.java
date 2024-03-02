@@ -22,11 +22,12 @@ public class AuthController {
         return ResponseEntity.ok(service.register(request));
     }
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ){
-        service.authenticate(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.authenticate(request));
+//        AuthenticationResponse authenticate = service.authenticate(request);
+//        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/change-password")
