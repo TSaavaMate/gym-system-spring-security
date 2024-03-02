@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
@@ -32,4 +33,40 @@ public class DefaultExceptionHandler {
         );
         return new ResponseEntity<>(apiError,HttpStatus.UNAUTHORIZED);
     }
+    @ExceptionHandler(InvalidUpdateRequestException.class)
+    public ResponseEntity<ApiError> handleWrongUpdateRequest(InvalidUpdateRequestException ex,
+                                                             HttpServletRequest request){
+        var apiError = new ApiError(
+                request.getRequestURI(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SQLException.class)
+    public ResponseEntity<ApiError> handleSqlException(SQLException ex,
+                                                             HttpServletRequest request){
+        var apiError = new ApiError(
+                request.getRequestURI(),
+                ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvalidTrainingCreationRequest.class)
+    public ResponseEntity<ApiError> handleSqlException(InvalidTrainingCreationRequest ex,
+                                                       HttpServletRequest request){
+        var apiError = new ApiError(
+                request.getRequestURI(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+    }
+
 }
