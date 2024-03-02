@@ -1,5 +1,4 @@
 package com.example.jwtdemo.services.trainee;
-
 import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
@@ -17,7 +16,10 @@ import com.example.jwtdemo.services.trainee.mapper.TraineeRequestMapper;
 import com.example.jwtdemo.services.trainee.traineeTraining.TraineeTrainingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
@@ -27,14 +29,43 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ConcreteTraineeService implements TraineeService{
+@Aspect
+public class ConcreteTraineeService implements TraineeService {
+
     private final TraineeRepository traineeRepository;
-
     private final TraineeTrainingService traineeTrainingService;
-
     private final TraineeRequestMapper requestMapper;
-
     private final TraineeDtoMapper dtoMapper;
+
+
+    private final ThreadLocal<String> transactionId = new ThreadLocal<>();
+
+
+    @Pointcut("execution(* com.example.jwtdemo.services.trainee.TraineeService.*(..))")
+    private void serviceMethods() {}
+
+
+    @Before("execution(* com.example.jwtdemo.services.trainee.ConcreteTraineeService.update(..))")
+    public void logTransactionStart(JoinPoint joinPoint) {
+        transactionId.set(String.valueOf(System.currentTimeMillis()));
+        log.info("Transaction {} started for method: {}", transactionId.get(), joinPoint.getSignature().toShortString());
+    }
+
+    @AfterReturning("execution(* com.example.jwtdemo.services.trainee.ConcreteTraineeService.update(..))")
+    public void logTransactionEnd(JoinPoint joinPoint) {
+        log.info("Transaction {} ended for method: {}", transactionId.get(), joinPoint.getSignature().toShortString());
+        transactionId.remove();
+    }
+
+    @AfterReturning(pointcut = "execution(* com.example.jwtdemo.services.trainee.ConcreteTraineeService.*(..))", returning = "result")
+    public void logRestCall(JoinPoint joinPoint, Object result) {
+        String methodName = joinPoint.getSignature().getName();
+        Object[] args = joinPoint.getArgs();
+        String endpoint = joinPoint.getTarget().getClass().getSimpleName() + "." + methodName;
+        log.info("REST call to endpoint: {}, Request: {}, Response: {}", endpoint, args, result);
+    }
+
+
 
     @Override
     public Optional<Trainee> findById(Long id) {
@@ -55,8 +86,6 @@ public class ConcreteTraineeService implements TraineeService{
         return traineeDto;
     }
 
-
-
     @Override
     public Collection<Trainee> findAll() {
         return traineeRepository.findAll();
@@ -64,11 +93,9 @@ public class ConcreteTraineeService implements TraineeService{
 
     @Override
     public void delete(Long id) {
-
         traineeRepository.deleteById(id);
-        log.info("deleted trainee with ID: {}", id);
+        log.info("Deleted trainee with ID: {}", id);
     }
-
 
     @Override
     public void setActiveState(PatchTraineeRequest request) {
@@ -82,12 +109,12 @@ public class ConcreteTraineeService implements TraineeService{
     }
 
     @Override
-    public TraineeDto update(@Validated UpdateTraineeRequest request)  {
-
+    @Transactional
+    public TraineeDto update(@Validated UpdateTraineeRequest request) {
         var trainee = traineeRepository.findTraineeByUserUsername(request.getUsername())
                 .orElseThrow(() -> {
-                    log.warn("not found trainee with username : {}" , request.getUsername());
-                    return new ResourceNotFoundException("not found trainee with username :" + request.getUsername());
+                    log.warn("Not found trainee with username: {}", request.getUsername());
+                    return new ResourceNotFoundException("Not found trainee with username: " + request.getUsername());
                 });
 
         var date = request.getDate_of_birth();
@@ -97,29 +124,24 @@ public class ConcreteTraineeService implements TraineeService{
         }
 
         var address = request.getAddress();
-        if (address != null){
+        if (address != null) {
             trainee.setAddress(request.getAddress());
         }
 
         var user = trainee.getUser();
-
         user.setFirstName(request.getFirstname());
         user.setLastName(request.getLastname());
         user.setIsActive(request.getIsActive());
 
         trainee.setUser(user);
 
-
-
         traineeRepository.save(trainee);
 
-        log.info("updated trainee with ID: {}", trainee.getId());
+        log.info("Updated trainee with ID: {}", trainee.getId());
 
         var updated = traineeRepository.findById(trainee.getId()).orElseThrow();
 
         return dtoMapper.apply(updated);
-
-
     }
 
     @Override
@@ -127,21 +149,19 @@ public class ConcreteTraineeService implements TraineeService{
         var username = request.getTraineeUsername();
         var trainee = traineeRepository.findTraineeByUserUsername(username)
                 .orElseThrow(() -> {
-                    log.warn("not found trainee with username : {}" , username);
-                    return new ResourceNotFoundException("not found trainee with username :" + username);
+                    var message = "Not found trainee with username: " +  username ;
+
+                    log.warn(message);
+
+                    return new ResourceNotFoundException(message);
                 });
 
-        return traineeTrainingService.updateTraineeTrainers(trainee,request.getTrainers());
-
+        return traineeTrainingService.updateTraineeTrainers(trainee, request.getTrainers());
     }
-
 
     @Override
     public RegistrationResponse create(RegistrationRequest request) {
-
         var trainee = requestMapper.apply((TraineeRegistrationRequest) request);
-
-
         traineeRepository.save(trainee);
         return RegistrationResponse.builder()
                 .username(trainee.getUser().getUsername())
