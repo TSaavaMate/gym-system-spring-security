@@ -103,7 +103,11 @@ public class AuthServiceTest {
     @Test
     public void testChangePasswordAndAuthenticate() {
 
-        ChangePasswordRequest request = ChangePasswordRequest.builder().build();
+        ChangePasswordRequest request = ChangePasswordRequest.builder()
+                .email("email")
+                .oldPassword("old")
+                .newPassword("new")
+                .build();
         User user = mock(User.class);
 
         when(userRepository.findByEmail(any()))
@@ -111,6 +115,9 @@ public class AuthServiceTest {
 
         when(passwordEncoder.encode(any()))
                 .thenReturn("encodedPassword");
+
+        when(passwordEncoder.matches(any(),any()))
+                .thenReturn(true);
 
         when(jwtTokenService.generateToken(any()))
                 .thenReturn("generatedToken");
