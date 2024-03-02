@@ -4,6 +4,7 @@ import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.repositories.LogRepository;
 import com.example.jwtdemo.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -16,10 +17,12 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 
 @Component
 @Aspect
 @RequiredArgsConstructor
+@Slf4j
 public class LoggingAspect {
     private final LogRepository logRepository;
     private final UserRepository userRepository;
@@ -29,6 +32,12 @@ public class LoggingAspect {
 
     @Around(value = "executeLogging()")
     public Object logMethodCall(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        String transactionId = generateTransactionId();
+
+        // Log the start of the transaction
+        log.info("Transaction started with ID: {}", transactionId);
+
         var timeStamp = LocalDateTime.now();
         var logLevel = LogLevel.INFO;
 
@@ -38,9 +47,13 @@ public class LoggingAspect {
         try {
             returnValue = joinPoint.proceed();
 
+            log.info("Transaction completed with ID: {}", transactionId);
+
         } catch (Throwable e) {
             logLevel = LogLevel.ERROR;
             exception = e;
+
+            log.error("Transaction failed with ID: {}", transactionId);
         }
 
         String stackTrace = (exception == null)
@@ -104,5 +117,9 @@ public class LoggingAspect {
 
 
         return returnValue;
+    }
+
+    private String generateTransactionId() {
+        return UUID.randomUUID().toString();
     }
 }

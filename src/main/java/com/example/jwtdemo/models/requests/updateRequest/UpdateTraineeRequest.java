@@ -1,10 +1,6 @@
 package com.example.jwtdemo.models.requests.updateRequest;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 import java.sql.Date;
@@ -14,14 +10,14 @@ import java.sql.Date;
 @NoArgsConstructor
 @Builder
 public class UpdateTraineeRequest {
-    @NotNull
+    @NonNull 
     private String username;
-    @NotNull
+    @NonNull
     private String firstname;
-    @NotNull
+    @NonNull
     private String lastname;
     private Date date_of_birth;
     private String address;
-    @NotNull
+    @NonNull
     private Boolean isActive;
 }

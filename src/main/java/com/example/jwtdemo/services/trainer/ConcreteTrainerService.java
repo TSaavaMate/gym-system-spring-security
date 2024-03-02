@@ -1,5 +1,6 @@
 package com.example.jwtdemo.services.trainer;
 
+import com.example.jwtdemo.aspect.Loggable;
 import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
@@ -19,6 +20,7 @@ import com.example.jwtdemo.services.trainer.trainerTraining.TrainerTrainingServi
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
@@ -62,11 +64,14 @@ public class ConcreteTrainerService implements TrainerService{
 
     @Override
     public void delete(Long id) {
+        if (trainerRepository.existsById(id)) throw new ResourceNotFoundException();
 
         trainerRepository.deleteById(id);
         log.info("deleted trainee with ID: {}", id);
     }
     @Override
+    @Loggable
+    @Transactional
     public TrainerDto update(@Validated UpdateTrainerRequest request) {
         var trainer = trainerRepository.findTrainerByUserUsername(request.getUsername())
                 .orElseThrow(() -> {

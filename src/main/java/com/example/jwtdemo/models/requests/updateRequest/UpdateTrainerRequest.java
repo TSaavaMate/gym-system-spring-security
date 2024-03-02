@@ -1,23 +1,19 @@
 package com.example.jwtdemo.models.requests.updateRequest;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class UpdateTrainerRequest {
-    @NotNull
+    @NonNull
     private String username;
-    @NotNull
+    @NonNull
     private String firstname;
-    @NotNull
+    @NonNull
     private String lastname;
     private String specialization;
-    @NotNull
+    @NonNull
     private Boolean isActive;
 }

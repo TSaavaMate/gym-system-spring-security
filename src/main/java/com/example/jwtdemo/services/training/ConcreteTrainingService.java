@@ -1,5 +1,6 @@
 package com.example.jwtdemo.services.training;
 
+import com.example.jwtdemo.aspect.Loggable;
 import com.example.jwtdemo.entities.Training;
 import com.example.jwtdemo.exceptions.InvalidTrainingCreationRequest;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
@@ -16,6 +17,7 @@ import com.example.jwtdemo.services.training.mapper.TrainerTrainingDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -63,6 +65,8 @@ public class ConcreteTrainingService implements TrainingService {
     }
 
     @Override
+    @Transactional
+    @Loggable
     public void createTraining(TrainingRegistrationRequest request) {
         var trainee = traineeRepository.findTraineeByUserUsername(request.getTraineeUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("not found trainee : cannot create training without trainee"));

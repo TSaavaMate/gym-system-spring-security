@@ -19,6 +19,7 @@ import com.example.jwtdemo.services.trainee.traineeTraining.TraineeTrainingServi
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
@@ -42,6 +43,7 @@ public class ConcreteTraineeService implements TraineeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TraineeDto findByUsername(String username) {
         var trainee = traineeRepository.findTraineeByUserUsername(username)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -61,7 +63,11 @@ public class ConcreteTraineeService implements TraineeService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
+
+        if (!traineeRepository.existsById(id)) throw new ResourceNotFoundException();
+
         traineeRepository.deleteById(id);
         log.info("Deleted trainee with ID: {}", id);
     }
@@ -79,6 +85,7 @@ public class ConcreteTraineeService implements TraineeService {
 
     @Override
     @Loggable
+    @Transactional
     public TraineeDto update(@Validated UpdateTraineeRequest request) {
         var trainee = traineeRepository.findTraineeByUserUsername(request.getUsername())
                 .orElseThrow(() -> {
