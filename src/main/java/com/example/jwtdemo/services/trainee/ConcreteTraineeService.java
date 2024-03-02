@@ -4,29 +4,30 @@ import com.example.jwtdemo.entities.Trainee;
 import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.dto.TraineeDto;
+import com.example.jwtdemo.models.profiles.TrainerProfile;
 import com.example.jwtdemo.models.requests.patchRequest.PatchTraineeRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.RegistrationRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.TraineeRegistrationRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
+import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeTrainersRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.repositories.TraineeRepository;
 import com.example.jwtdemo.services.trainee.mapper.TraineeDtoMapper;
 import com.example.jwtdemo.services.trainee.mapper.TraineeRequestMapper;
 import com.example.jwtdemo.services.trainee.traineeTraining.TraineeTrainingService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ConcreteTraineeService implements TraineeService{
-    private final Logger logger = LoggerFactory.getLogger(ConcreteTraineeService.class);
-
     private final TraineeRepository traineeRepository;
 
     private final TraineeTrainingService traineeTrainingService;
@@ -65,7 +66,7 @@ public class ConcreteTraineeService implements TraineeService{
     public void delete(Long id) {
 
         traineeRepository.deleteById(id);
-        logger.info("deleted trainee with ID: {}", id);
+        log.info("deleted trainee with ID: {}", id);
     }
 
 
@@ -85,7 +86,7 @@ public class ConcreteTraineeService implements TraineeService{
 
         var trainee = traineeRepository.findTraineeByUserUsername(request.getUsername())
                 .orElseThrow(() -> {
-                    logger.warn("not found trainee with username : {}" , request.getUsername());
+                    log.warn("not found trainee with username : {}" , request.getUsername());
                     return new ResourceNotFoundException("not found trainee with username :" + request.getUsername());
                 });
 
@@ -112,12 +113,25 @@ public class ConcreteTraineeService implements TraineeService{
 
         traineeRepository.save(trainee);
 
-        logger.info("updated trainee with ID: {}", trainee.getId());
+        log.info("updated trainee with ID: {}", trainee.getId());
 
         var updated = traineeRepository.findById(trainee.getId()).orElseThrow();
 
         return dtoMapper.apply(updated);
 
+
+    }
+
+    @Override
+    public List<TrainerProfile> updateTraineeTrainers(UpdateTraineeTrainersRequest request) {
+        var username = request.getTraineeUsername();
+        var trainee = traineeRepository.findTraineeByUserUsername(username)
+                .orElseThrow(() -> {
+                    log.warn("not found trainee with username : {}" , username);
+                    return new ResourceNotFoundException("not found trainee with username :" + username);
+                });
+
+        return traineeTrainingService.updateTraineeTrainers(trainee,request.getTrainers());
 
     }
 

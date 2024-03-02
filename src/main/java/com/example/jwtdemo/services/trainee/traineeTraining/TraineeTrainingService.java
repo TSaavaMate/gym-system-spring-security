@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TraineeTrainingService {
     List<TrainerProfile> getTraineeTrainers(Trainee trainee);
+
+    List<TrainerProfile> updateTraineeTrainers(Trainee trainee,List<String> trainers);
 }

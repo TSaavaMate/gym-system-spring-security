@@ -1,4 +1,4 @@
-package com.example.jwtdemo.services.trainingtype;
+package com.example.jwtdemo.services.trainingtype.mapper;
 
 import com.example.jwtdemo.entities.TrainingType;
 import com.example.jwtdemo.models.dto.TrainingTypeDto;

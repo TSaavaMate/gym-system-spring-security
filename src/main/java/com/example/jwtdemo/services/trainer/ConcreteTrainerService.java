@@ -17,8 +17,7 @@ import com.example.jwtdemo.services.trainer.mapper.TrainerProfileMapper;
 import com.example.jwtdemo.services.trainer.mapper.TrainerRequestMapper;
 import com.example.jwtdemo.services.trainer.trainerTraining.TrainerTrainingService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,8 +27,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ConcreteTrainerService implements TrainerService{
-    private final Logger logger = LoggerFactory.getLogger(ConcreteTrainerService.class);
 
     private final TrainerRepository trainerRepository;
     private final TrainerRequestMapper requestMapper;
@@ -65,13 +64,13 @@ public class ConcreteTrainerService implements TrainerService{
     public void delete(Long id) {
 
         trainerRepository.deleteById(id);
-        logger.info("deleted trainee with ID: {}", id);
+        log.info("deleted trainee with ID: {}", id);
     }
     @Override
     public TrainerDto update(@Validated UpdateTrainerRequest request) {
         var trainer = trainerRepository.findTrainerByUserUsername(request.getUsername())
                 .orElseThrow(() -> {
-                    logger.warn("not found trainer with username : {}" , request.getUsername());
+                    log.warn("not found trainer with username : {}" , request.getUsername());
                     return new ResourceNotFoundException("not found trainer with username :" + request.getUsername());
                 });
 
@@ -87,7 +86,7 @@ public class ConcreteTrainerService implements TrainerService{
 
         trainerRepository.save(trainer);
 
-        logger.info("updated training with ID: {}", trainer.getId());
+        log.info("updated training with ID: {}", trainer.getId());
 
         var trainees = trainerTrainingService.getTrainerTrainees(trainer);
 

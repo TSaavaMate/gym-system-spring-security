@@ -2,6 +2,7 @@ package com.example.jwtdemo.services.trainingtype;
 
 import com.example.jwtdemo.models.dto.TrainingTypeDto;
 import com.example.jwtdemo.repositories.TrainingTypeRepository;
+import com.example.jwtdemo.services.trainingtype.mapper.TrainingTypeDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -2,53 +2,108 @@ package com.example.jwtdemo.services;
 
 import com.example.jwtdemo.entities.Trainer;
 import com.example.jwtdemo.entities.User;
+import com.example.jwtdemo.exceptions.ResourceNotFoundException;
+import com.example.jwtdemo.models.requests.patchRequest.PatchTrainerRequest;
 import com.example.jwtdemo.repositories.TrainerRepository;
 import com.example.jwtdemo.services.trainer.ConcreteTrainerService;
+import com.example.jwtdemo.services.trainer.mapper.TrainerDtoMapper;
+import com.example.jwtdemo.services.trainer.mapper.TrainerRequestMapper;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ConcreteTrainerServiceTest {
+class ConcreteTrainerServiceTest {
 
     @Mock
     private TrainerRepository trainerRepository;
 
+    @Mock
+    private TrainerRequestMapper requestMapper;
+
+    @Mock
+    private TrainerDtoMapper dtoMapper;
+
     @InjectMocks
     private ConcreteTrainerService trainerService;
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
 
     @Test
-    public void testDelete() {
-        Long trainerId = 1L;
-
-        trainerService.delete(trainerId);
-
-        verify(trainerRepository, times(1)).deleteById(trainerId);
-    }
-
-    @Test
-    public void testSetActiveState() {
-        Long trainerId = 1L;
-        Boolean state = true;
+    void testFindById() {
+        Long id = 1L;
         Trainer trainer = new Trainer();
-        trainer.setId(trainerId);
-        trainer.setUser(
-                User.builder().isActive(false).build()
-        );
-        when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(trainer));
+        when(trainerRepository.findById(id)).thenReturn(Optional.of(trainer));
 
-        Trainer result = trainerService.SetActiveState(trainerId, state);
+        Optional<Trainer> result = trainerService.findById(id);
 
-        assertTrue(result.getUser().getIsActive());
+        assertTrue(result.isPresent());
+        assertEquals(trainer, result.get());
     }
 
+    @Test
+    void testDelete() {
+        Long id = 1L;
+        doNothing().when(trainerRepository).deleteById(id);
+
+        assertDoesNotThrow(() -> trainerService.delete(id));
+    }
+
+    @Test
+    void testSetActiveState() {
+        String username = "testUser";
+        Boolean isActive = true;
+        Trainer trainer = new Trainer();
+        trainer.setUser(User.builder().build());
+        PatchTrainerRequest request = new PatchTrainerRequest();
+        request.setUsername(username);
+        request.setIsActive(true);
+        when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(Optional.of(trainer));
+
+        assertDoesNotThrow(() -> trainerService.setActiveState(request));
+
+        assertEquals(isActive, trainer.getUser().getIsActive());
+        verify(trainerRepository, times(1)).save(trainer);
+    }
+
+    @Test
+    void testSetActiveState_NonExistentTrainer() {
+        String username = "nonexistentUser";
+        PatchTrainerRequest request = new PatchTrainerRequest();
+        request.setUsername(username);
+        request.setIsActive(true);
+        when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> trainerService.setActiveState(request));
+    }
+
+    @Test
+    void testSetActiveState_ComplexBehavior() {
+        String username = "testUser";
+        Trainer trainer = new Trainer();
+        trainer.setUser(User.builder().isActive(false).build());
+        PatchTrainerRequest request = new PatchTrainerRequest();
+        request.setUsername(username);
+        request.setIsActive(true);
+        when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(Optional.of(trainer));
+
+        assertDoesNotThrow(() -> trainerService.setActiveState(request));
+
+        assertTrue(trainer.getUser().getIsActive());
+        verify(trainerRepository, times(1)).save(trainer);
+    }
 }
+
+
 
