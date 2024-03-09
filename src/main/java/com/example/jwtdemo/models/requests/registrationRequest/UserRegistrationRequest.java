@@ -15,5 +15,4 @@ public class UserRegistrationRequest implements RegistrationRequest {
     private String email;
     private String password;
     private Boolean IsActive;
-    private String role;
 }

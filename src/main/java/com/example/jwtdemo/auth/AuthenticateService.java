@@ -8,6 +8,7 @@ import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import com.example.jwtdemo.repositories.UserRepository;
+import com.example.jwtdemo.utils.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,12 +41,11 @@ public class AuthenticateService {
                 .email(request.getEmail())
                 .username(username)
                 .password(encoded)
-                .role(request.getRole())
+                .role(Role.ROLE_USER)
                 .isActive(request.getIsActive())
                 .build();
 
         userRepository.save(user);
-
         var jwt = jwtTokenService.generateToken(user);
 
         return AuthenticationResponse.builder()

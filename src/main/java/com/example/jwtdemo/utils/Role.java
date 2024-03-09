@@ -1,7 +1,8 @@
 package com.example.jwtdemo.utils;
 
 public enum Role {
-    ADMIN,
-    TRAINEE,
-    TRAINER
+    ROLE_ADMIN,
+    ROLE_USER,
+    ROLE_TRAINEE,
+    ROLE_TRAINER
 }

@@ -35,7 +35,7 @@ public class LoggingAspect {
 
         String transactionId = generateTransactionId();
 
-        // Log the start of the transaction
+
         log.info("Transaction started with ID: {}", transactionId);
 
         var timeStamp = LocalDateTime.now();

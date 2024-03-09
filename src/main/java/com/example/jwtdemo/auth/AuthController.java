@@ -26,8 +26,6 @@ public class AuthController {
             @RequestBody AuthenticationRequest request
     ){
         return ResponseEntity.ok(service.authenticate(request));
-//        AuthenticationResponse authenticate = service.authenticate(request);
-//        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/change-password")
