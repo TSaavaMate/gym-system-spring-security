@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;trustServerCertificate=true;databaseName=jwt_security
+    username: sa
+    password: VeryStr0ngP@ssw0rd
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql:
+    database: sql_server
+
+jwt:
+  secretKey: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: "/manage"
+  endpoint:
+    health:
+      show-details: when_authorized
+      group:
+        health-group:
+          include:
+            - ping
+            - diskSpace
+info:
+  app:
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+  javaVersion: @java.version@
+  build-timestamp: @maven.build.timestamp@
+
+
+
