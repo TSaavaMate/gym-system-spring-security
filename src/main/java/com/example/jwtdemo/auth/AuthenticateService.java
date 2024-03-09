@@ -6,7 +6,6 @@ import com.example.jwtdemo.entities.LoginAttempt;
 import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.BlockedUserException;
 import com.example.jwtdemo.exceptions.InvalidCredentialException;
-import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.requests.authRequest.AuthenticationRequest;
 import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
@@ -18,14 +17,12 @@ import com.example.jwtdemo.utils.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

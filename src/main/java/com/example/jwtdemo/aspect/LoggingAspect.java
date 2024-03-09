@@ -87,12 +87,17 @@ public class LoggingAspect {
         var className = joinPoint.getClass().getName();
 
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication userAuth = SecurityContextHolder.getContext().getAuthentication();
 
-        var user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(ResourceNotFoundException::new);
+        Integer userId = 0;
 
-        var userId = user.getId();
+        if (userAuth !=null) {
+            var user = userRepository.findByEmail(userAuth.getName())
+                    .orElseThrow(ResourceNotFoundException::new);
+
+            userId = user.getId();
+        }
+
 
 
 
