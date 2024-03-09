@@ -8,7 +8,9 @@ import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeRequest;
 import com.example.jwtdemo.models.requests.updateRequest.UpdateTraineeTrainersRequest;
 import com.example.jwtdemo.models.responses.RegistrationResponse;
 import com.example.jwtdemo.services.trainee.TraineeService;
-import lombok.RequiredArgsConstructor;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +18,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/trainee")
-@RequiredArgsConstructor
+@Profile("!local")
 public class TraineeController {
 
     private final TraineeService traineeService;
+    private final Counter hitCounter;
+
+    public TraineeController(MeterRegistry registry, TraineeService traineeService) {
+        hitCounter = Counter.builder("hit_counter")
+                .description("number of hits on searching trainee")
+                .register(registry);
+        this.traineeService = traineeService;
+    }
+
 
     @PostMapping
     public ResponseEntity<RegistrationResponse> create(@RequestBody TraineeRegistrationRequest request){
@@ -27,6 +38,7 @@ public class TraineeController {
     }
     @GetMapping("/{username}")
     public ResponseEntity<TraineeDto> findByUsername(@PathVariable String username) {
+        hitCounter.increment();
         return ResponseEntity.ok(traineeService.findByUsername(username));
     }
 

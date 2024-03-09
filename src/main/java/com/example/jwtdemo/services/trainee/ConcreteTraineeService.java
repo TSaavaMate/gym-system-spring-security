@@ -46,7 +46,10 @@ public class ConcreteTraineeService implements TraineeService {
     @Transactional(readOnly = true)
     public TraineeDto findByUsername(String username) {
         var trainee = traineeRepository.findTraineeByUserUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> {
+                    log.warn("Not found trainee with username: {}", username);
+                    return new ResourceNotFoundException("Not found trainee with username: " + username);
+                });
 
         var trainers = traineeTrainingService.getTraineeTrainers(trainee);
 
