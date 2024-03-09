@@ -26,8 +26,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->
-                    auth.requestMatchers("api/v1/auth/**")
-                            .permitAll()
+                    auth
                             .anyRequest()
                             .permitAll()
                 )
@@ -40,12 +39,32 @@ public class SecurityConfiguration {
         return http.build();
     }
     @Bean
-    @Profile("!dev")
+    @Profile("local")
+    public SecurityFilterChain securityFilterChainLocal(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth->
+                        auth
+                                .anyRequest()
+                                .permitAll()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+    @Bean
+    @Profile("prod")
     public SecurityFilterChain securityFilterChainProd(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->
-                        auth.requestMatchers("api/v1/auth/**")
+                        auth
+                                .requestMatchers("api/v1/auth/**")
                                 .permitAll()
+                                .requestMatchers("/manage/prometheus").permitAll()
+                                .requestMatchers("/manage/health").hasRole("ADMIN")
                                 .anyRequest()
                                 .authenticated()
                 )
