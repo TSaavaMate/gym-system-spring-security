@@ -1,27 +1,42 @@
 package com.example.jwtdemo.auth;
 
+import com.example.jwtdemo.aspect.Loggable;
 import com.example.jwtdemo.config.JwtTokenService;
+import com.example.jwtdemo.entities.LoginAttempt;
 import com.example.jwtdemo.entities.User;
+import com.example.jwtdemo.exceptions.BlockedUserException;
 import com.example.jwtdemo.exceptions.InvalidCredentialException;
+import com.example.jwtdemo.exceptions.ResourceNotFoundException;
 import com.example.jwtdemo.models.requests.authRequest.AuthenticationRequest;
 import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
+import com.example.jwtdemo.repositories.LoginAttemptRepository;
 import com.example.jwtdemo.repositories.UserRepository;
 import com.example.jwtdemo.utils.Role;
+import com.example.jwtdemo.utils.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.AuthenticationException;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticateService {
+    private static final Integer MAX_LOGIN_ATTEMPTS = 5;
+    private static final Integer MIN_LOGIN_ATTEMPTS = 1;
     private final CredentialConfigurer credentialConfigurer;
 
     private final UserRepository userRepository;
+
+    private final LoginAttemptRepository loginAttemptRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -43,6 +58,7 @@ public class AuthenticateService {
                 .password(encoded)
                 .role(Role.ROLE_USER)
                 .isActive(request.getIsActive())
+                .status(UserStatus.ACTIVE)
                 .build();
 
         userRepository.save(user);
@@ -53,22 +69,79 @@ public class AuthenticateService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws AuthenticationException {
 
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
-        var jwt = jwtTokenService.generateToken(user);
+            try {
+            var user = userRepository.findByEmail(request.getEmail()).orElseThrow(InvalidCredentialException::new);
 
-        return AuthenticationResponse.builder()
-                .token(jwt)
-                .build();
+            if (user.getStatus().equals(UserStatus.BLOCKED)){
+                throw new BlockedUserException();
+            }
+
+            if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){
+                throw new AuthenticationException();
+            }
+
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+
+            var jwt = jwtTokenService.generateToken(user);
+
+            return AuthenticationResponse.builder()
+                    .token(jwt)
+                    .build();
+        } catch (AuthenticationException e) {
+            handleFailedLoginAttempt(request.getEmail());
+            throw e;
+        }
     }
+
+    @Loggable
+    private void handleFailedLoginAttempt(String email) {
+        var optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) return; //email was wrong no need to increment login attempt
+
+        var user = optionalUser.get();
+        var userId = user.getId();
+
+        var userAttempts = loginAttemptRepository.findByUserId(userId);
+
+
+        if (userAttempts.isEmpty()){
+            var attempt = LoginAttempt.builder()
+                    .userId(userId)
+                    .lastLogin(LocalDateTime.now())
+                    .loginAttempts(MIN_LOGIN_ATTEMPTS)
+                    .build();
+            loginAttemptRepository.save(attempt);
+            return;
+        }
+
+        var attemptCount = userAttempts.get().getLoginAttempts();
+
+        userAttempts.get().setLastLogin(LocalDateTime.now());
+        userAttempts.get().setLoginAttempts(++attemptCount);
+
+
+        loginAttemptRepository.save(userAttempts.get());
+
+
+
+        if (attemptCount >= MAX_LOGIN_ATTEMPTS){
+
+            user.setStatus(UserStatus.BLOCKED);
+
+            userRepository.save(user);
+        }
+
+    }
+
 
     @Transactional
     public AuthenticationResponse changePasswordAndAuthenticate(ChangePasswordRequest request) {

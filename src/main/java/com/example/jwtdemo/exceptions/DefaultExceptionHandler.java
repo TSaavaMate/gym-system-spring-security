@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.naming.AuthenticationException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
@@ -76,6 +77,30 @@ public class DefaultExceptionHandler {
         var apiError = new ApiError(
                 request.getRequestURI(),
                 ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleExpiredAuthException(AuthenticationException ex,
+                                                              HttpServletRequest request){
+        var apiError = new ApiError(
+                request.getRequestURI(),
+                "user was not able to authenticate : " + ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BlockedUserException.class)
+    public ResponseEntity<ApiError> handleBlockedUserException(BlockedUserException ex,
+                                                               HttpServletRequest request){
+        var apiError = new ApiError(
+                request.getRequestURI(),
+                "user status is blocked " + ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now()
         );

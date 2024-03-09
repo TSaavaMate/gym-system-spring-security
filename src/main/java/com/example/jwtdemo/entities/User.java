@@ -1,6 +1,7 @@
 package com.example.jwtdemo.entities;
 
 import com.example.jwtdemo.utils.Role;
+import com.example.jwtdemo.utils.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +45,9 @@ public class User  implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

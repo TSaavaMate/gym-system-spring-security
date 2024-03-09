@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.naming.AuthenticationException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,7 +79,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testAuthenticate() {
+    public void testAuthenticate() throws AuthenticationException {
 
         AuthenticationRequest request =AuthenticationRequest.builder()
                 .email("domain@gmail.com")
