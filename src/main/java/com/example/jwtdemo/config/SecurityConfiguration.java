@@ -76,7 +76,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/manage/prometheus").permitAll()
                                 .requestMatchers("/manage/health").hasRole("ADMIN")
                                 .anyRequest()
-                                .permitAll()
+                                .authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
