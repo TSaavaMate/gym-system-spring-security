@@ -22,7 +22,6 @@ public class UserUnblockScheduler {
     @Scheduled(fixedDelay = 300000)
     @Loggable
     public void unblockUsers(){
-        System.out.println("inside unblocking");
         List<User> blockedUsers = userRepository.findUsersByStatus(UserStatus.BLOCKED);
 
         blockedUsers.forEach(user ->{

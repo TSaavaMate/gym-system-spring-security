@@ -3,6 +3,7 @@ package com.example.jwtdemo.auth;
 import com.example.jwtdemo.aspect.Loggable;
 import com.example.jwtdemo.config.JwtTokenService;
 import com.example.jwtdemo.entities.LoginAttempt;
+import com.example.jwtdemo.entities.Token;
 import com.example.jwtdemo.entities.User;
 import com.example.jwtdemo.exceptions.BlockedUserException;
 import com.example.jwtdemo.exceptions.InvalidCredentialException;
@@ -11,8 +12,10 @@ import com.example.jwtdemo.models.requests.authRequest.ChangePasswordRequest;
 import com.example.jwtdemo.models.requests.registrationRequest.UserRegistrationRequest;
 import com.example.jwtdemo.models.responses.AuthenticationResponse;
 import com.example.jwtdemo.repositories.LoginAttemptRepository;
+import com.example.jwtdemo.repositories.TokenRepository;
 import com.example.jwtdemo.repositories.UserRepository;
 import com.example.jwtdemo.utils.Role;
+import com.example.jwtdemo.utils.TokenType;
 import com.example.jwtdemo.utils.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +30,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class AuthenticateService {
-    private static final Integer MAX_LOGIN_ATTEMPTS = 5;
+    private static final Integer MAX_LOGIN_ATTEMPTS = 3;
     private static final Integer MIN_LOGIN_ATTEMPTS = 1;
     private final CredentialConfigurer credentialConfigurer;
 
@@ -40,6 +43,8 @@ public class AuthenticateService {
     private final JwtTokenService jwtTokenService;
 
     private final AuthenticationManager authManager;
+
+    private final TokenRepository tokenRepository;
 
     @Transactional
     public AuthenticationResponse register(UserRegistrationRequest request) {
@@ -58,13 +63,18 @@ public class AuthenticateService {
                 .status(UserStatus.ACTIVE)
                 .build();
 
-        userRepository.save(user);
+        var savedUser = userRepository.save(user);
+
         var jwt = jwtTokenService.generateToken(user);
+
+        saveUserToken(savedUser, jwt);
 
         return AuthenticationResponse.builder()
                 .token(jwt)
                 .build();
     }
+
+
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws AuthenticationException {
 
@@ -88,6 +98,9 @@ public class AuthenticateService {
             );
 
             var jwt = jwtTokenService.generateToken(user);
+
+            revokeAllTokens(user);
+            saveUserToken(user,jwt);
 
             return AuthenticationResponse.builder()
                     .token(jwt)
@@ -154,10 +167,38 @@ public class AuthenticateService {
         userRepository.save(user);
 
         var jwt=jwtTokenService.generateToken(user);
+
+        revokeAllTokens(user);
+        saveUserToken(user,jwt);
+
         return AuthenticationResponse.builder()
                 .token(jwt)
                 .build();
 
+    }
+
+    private void saveUserToken(User savedUser, String jwt) {
+        var token = Token.builder()
+                .user(savedUser)
+                .token(jwt)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+
+        tokenRepository.save(token);
+    }
+    private void revokeAllTokens(User user){
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+
+        if (validUserTokens.isEmpty()) return;
+
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+
+        tokenRepository.saveAll(validUserTokens);
     }
 
 }
